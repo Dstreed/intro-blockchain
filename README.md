@@ -94,7 +94,7 @@ Une clé privée est un nombre aléatoire. La clé publique associée est un nom
 Cet algorithme est un algorithme de signature numérique à courbe elliptique («ecdsa» : `elliptic curve digital signature algorithm`).
 La courbe elliptique utilisée par Bitcoin, Ethereum et de nombreuses autres crypto-monnaies est appelée secp256k1. L'équation de la courbe secp256k1 est `y² = x³ + 7`. Cette courbe ressemble à:
 
-![ecdsa](../res/ecdsa.gif)
+![ecdsa](./res/ecdsa.gif)
 
 Une clé privée est un grand nombre, de préférence, généré de manière aléatoire.
 La clé privée doit être gardée secrète.
@@ -121,3 +121,63 @@ Techniquement, Ethereum et Bitcoin suivent le même schéma dans leur implément
 - Ethereum dispose d'une machine virtuelle qui peut exécuter des instructions et stocker des données.
 - Ethereum offre la possibilité de déployer et d'utiliser des `smart contracts`, une version améliorée du `Script` Bitcoin. Les instructions des `contrats intelligents` sont exécutées dans `l'EVM` et les données sont stockées dans `l'EVM`.
 - Ethereum a introduit `Gas`, un système amélioré de frais de mineurs sur Bitcoin.
+
+### **EVM**
+
+La machine virtuelle Ethereum (`EVM`) est une puissante pile virtuelle en bac à sable intégrée dans chaque nœud Ethereum complet, responsable de l'exécution du bytecode du contrat. Les contrats sont généralement écrits dans des langages de niveau supérieur, comme Solidity, puis compilés en bytecode `EVM`.
+Cela signifie que le code machine est complètement isolé du réseau, du système de fichiers ou de tout processus de l'ordinateur hôte. Chaque nœud du réseau Ethereum exécute une instance `EVM` qui leur permet de s'entendre sur l'exécution des mêmes instructions. `L'EVM` est Turing complet, qui fait référence à un système capable d'exécuter n'importe quelle étape logique d'une fonction de calcul.
+Pour chaque instruction implémentée sur `l'EVM`, un système qui garde la trace du coût d'exécution, attribue à l'instruction un coût associé en unités de gaz. Lorsqu'un utilisateur souhaite lancer une exécution, il réserve de l'éther, qu'il est prêt à payer pour ce coût de gaz.
+Liste des opcodes EVM: https://ethervm.io/
+
+### **Smart contracts**
+
+Un contrat intelligent est un contrat auto-exécutable dont les termes de l'accord entre l'acheteur et le vendeur sont directement écrits dans des lignes de code.
+Les contrats intelligents permettent d'exécuter des transactions et des accords de confiance entre des parties disparates et anonymes sans avoir besoin d'une autorité centrale, d'un système juridique ou d'un mécanisme d'application externe.
+Un contrat intelligent est un ensemble de fonctions et de données stockées dans l'EVM.
+Les contrats intelligents peuvent exécuter des instructions, mais sont limités par une petite liste d'opcodes disponibles et également par la `Limite de gaz`, le montant maximum de `Gaz` qu'un utilisateur est prêt à payer.
+
+### **Gas**
+
+Seules les transactions en lecture seule sont gratuites. Sinon, l'expéditeur doit payer le montant de `Gas` nécessaire lorsqu'il envoie une transaction à la blockchain Ethereum.
+Il existe 3 principaux cas d'utilisation de `Gas`:
+
+- récompense pour le mineur qui a miné le bloc. Il gagnera tous les frais de `gaz` dépensés pour toutes les transactions par bloc extrait.
+- éviter les attaques `DDoS`. Comme les transactions ont besoin d'un montant `gaz`, une attaque `DDoS` nécessite une énorme quantité de crypto-monnaies pour payer ce coût `gaz`.
+- protection de l'utilisateur. Le `gasLimit` est utilisé pour empêcher l'utilisateur de gaspiller son Ether à cause d'un bug dans un contrat intelligent ou d'erreurs d'estimation.
+
+L'analogie bien connue pour comprendre le terme `gaz` est la voiture et le carburant.
+Si vous possédez une voiture et que vous devez la conduire du point A au point B, vous avez besoin d'une quantité de carburant. De la même manière, si vous avez des opérations que vous souhaitez exécuter dans l'Ethereum EVM, vous avez besoin de `Gas`. Avec votre voiture, plus vous roulez, plus vous avez besoin de carburant. Dans Ethereum, plus vous calculez, plus vous avez besoin de gaz.
+La quantité de `gaz` nécessaire est spécifiée dans l'annexe G du livre jaune.
+
+Le `gasPrice` est la valeur que l'expéditeur de la transaction est prêt à payer par unité `Gas`.
+En suivant l'analogie voiture / carburant, si votre voiture a un réservoir de 50 litres, combien payez-vous pour remplir complètement le réservoir? La réponse dépend du prix du litre dans la pompe.
+Il en va de même avec Ethereum et `Gas`, si vous avez une transaction qui nécessite 10 gaz à exécuter, le prix que vous payez pour exécuter cette transaction dépend du prix par unité de gaz.
+
+Le `gasLimit` est le `gaz` maximum que l'expéditeur de la transaction est prêt à dépenser pour exécuter cette transaction. Parfois, lors de l'exécution d'une transaction, vous ne savez peut-être pas exactement combien cela va coûter. Imaginez un scénario où vous avez un contrat intelligent avec un bug, une boucle infinie. Sans gasLimit, il serait possible de consommer la totalité du solde du compte émetteur. Le `gasLimit` est un mécanisme de sécurité pour empêcher quelqu'un d'utiliser tout son Ether en raison d'un bug ou d'une erreur d'estimation.
+
+Ainsi, lorsqu'un utilisateur envoie une transaction, il paiera un premier montant de:
+** Coût initial = `gasPrice` \ *` gasLimit` **
+Si le coût intrinsèque est supérieur au solde du compte émetteur, la transaction est considérée comme invalide. Une fois la transaction traitée, tout gaz non utilisé est remboursé sur le compte de l'expéditeur. Ainsi, un utilisateur paiera lorsque la transaction sera traitée:
+** Coût réel = `gasPrice` \ *` gasUsed` **
+Cependant, si votre transaction tombe en panne d'essence lors de l'exécution, il n'y a pas de remboursement. C'est pourquoi, généralement, l'expéditeur de la transaction définit le gasLimit sur une valeur supérieure à la quantité estimée de gaz.
+
+Si le réseau Ethereum n'est pas encombré, les coûts et `gasPrice` sont bon marché. C'est pourquoi ils sont exprimés dans une dénomination plus petite que l'Ether:
+
+| Unité | Valeur Wei | Wei |
+| ------------------- | --------- | ------------------------- |
+| wei | 1 wei | 1 |
+| Kwei (babbage) | 1e3 wei | 1 000 |
+| Mwei (lovelace) | 1e6 wei | 1 000 000 |
+| Gwei (shannon) | 1e9 wei | 1 000 000 000 |
+| microéther (szabo) | 1e12 wei | 1 000 000 000 000 |
+| milliéther (finney) | 1e15 wei | 1 000 000 000 000 000 |
+| éther | 1e18 wei | 1 000 000 000 000 000 000 |
+
+<br />
+Un mineur donnera toujours la priorité aux transactions avec un coût de gaz plus élevé.
+Les personnes qui envoient des transactions spécifient un prix du gaz et les mineurs décident des transactions à miner dans un bloc. Les deux se rencontrent quelque part au milieu sur un prix.
+
+Lors de l'envoi d'une transaction, il peut être difficile de savoir quel est le prix minimum de l'essence à ce moment-là. Il existe quelques outils qui analysent le réseau et le prix moyen du gaz utilisé dans les transactions récentes pour aider à choisir un gaz équitable Prix qui est susceptible d'être accepté par les mineurs:
+Station-service ETH: https://ethgasstation.info/
+Suivi du gaz Etherscan: https://etherscan.io/gastracker
+Addons de navigateur: https://addons.mozilla.org/en-US/firefox/addon/ethereum-gas-price-extension/
