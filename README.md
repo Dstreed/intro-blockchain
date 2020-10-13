@@ -177,7 +177,7 @@ Si le réseau Ethereum n'est pas encombré, les coûts et `gasPrice` sont bon ma
 Un mineur donnera toujours la priorité aux transactions avec un coût de gaz plus élevé.
 Les personnes qui envoient des transactions spécifient un prix du gaz et les mineurs décident des transactions à miner dans un bloc. Les deux se rencontrent quelque part au milieu sur un prix.
 
-Lors de l'envoi d'une transaction, il peut être difficile de savoir quel est le prix minimum de l'essence à ce moment-là. Il existe quelques outils qui analysent le réseau et le prix moyen du gaz utilisé dans les transactions récentes pour aider à choisir un gaz équitable Prix qui est susceptible d'être accepté par les mineurs:
-Station-service ETH: https://ethgasstation.info/
-Suivi du gaz Etherscan: https://etherscan.io/gastracker
-Addons de navigateur: https://addons.mozilla.org/en-US/firefox/addon/ethereum-gas-price-extension/
+Lors de l'envoi d'une transaction, il peut être difficile de savoir quel est le prix minimum de l'essence à ce moment-là. Il existe quelques outils qui analysent le réseau et le prix moyen du gaz utilisé dans les transactions récentes pour aider à choisir un gaz équitable Prix qui est susceptible d'être accepté par les mineurs:  
+Station-service ETH: https://ethgasstation.info/  
+Suivi du gaz Etherscan: https://etherscan.io/gastracker  
+Addons de navigateur: https://addons.mozilla.org/en-US/firefox/addon/ethereum-gas-price-extension/  
